@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";
+
+:root {
+  --background: #edf0ea;
+  --foreground: #1a1e1b;
+  --panel: rgba(252, 252, 248, 0.92);
+  --panel-border: rgba(24, 30, 27, 0.12);
+  --paper: #fffdfa;
+  --paper-shadow: rgba(25, 28, 24, 0.16);
+  --chrome: #223127;
+  --chrome-soft: #5d6c62;
+  --accent: #d95f33;
+  --accent-soft: rgba(217, 95, 51, 0.12);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(217, 95, 51, 0.16), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(49, 84, 62, 0.18), transparent 24%),
+    var(--background);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(217, 95, 51, 0.22);
+}
+
+.paper-grid {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(34, 49, 39, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 49, 39, 0.045) 1px, transparent 1px);
+  background-size: calc((100% - 32px - 88px) / 12) 28px;
+  background-position: 16px 16px;
+}
+
+.react-grid-layout {
+  min-height: 100%;
+}
+
+.react-grid-item {
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(217, 95, 51, 0.2);
+  border: 1px dashed rgba(217, 95, 51, 0.55);
+  border-radius: 18px;
+}
+
+.react-resizable-handle {
+  opacity: 0.8;
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 0.35rem;
+}
+
+.markdown-preview h1 {
+  font-size: 1.2em;
+}
+
+.markdown-preview h2 {
+  font-size: 1.08em;
+}
+
+.markdown-preview p,
+.markdown-preview ul,
+.markdown-preview ol {
+  margin-bottom: 0.45rem;
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+  padding-left: 1rem;
+}
+
+.markdown-preview li + li {
+  margin-top: 0.16rem;
+}
+
+.markdown-preview code {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  background: rgba(24, 30, 27, 0.07);
+  border-radius: 0.35rem;
+  padding: 0.08rem 0.26rem;
+}
+
+.markdown-preview .katex-display {
+  margin: 0.55rem 0;
+}
