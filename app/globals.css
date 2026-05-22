@@ -79,7 +79,95 @@ textarea {
 }
 
 .react-resizable-handle {
-  opacity: 0.8;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 0;
+  opacity: 0 !important;
+  padding: 0 !important;
+  z-index: 30;
+}
+
+.react-resizable-handle::before,
+.react-resizable-handle::after {
+  content: none !important;
+  display: none !important;
+}
+
+.react-resizable-handle-n,
+.react-resizable-handle-s {
+  height: 16px;
+  left: 24px;
+  right: 24px;
+  width: auto;
+  cursor: ns-resize;
+}
+
+.react-resizable-handle-n {
+  top: -8px;
+}
+
+.react-resizable-handle-s {
+  bottom: -8px;
+}
+
+.react-resizable-handle-e,
+.react-resizable-handle-w {
+  bottom: 24px;
+  cursor: ew-resize;
+  height: auto;
+  top: 24px;
+  width: 16px;
+}
+
+.react-resizable-handle-e {
+  right: -8px;
+}
+
+.react-resizable-handle-w {
+  left: -8px;
+}
+
+.react-resizable-handle-ne,
+.react-resizable-handle-nw,
+.react-resizable-handle-se,
+.react-resizable-handle-sw {
+  background: transparent !important;
+  height: 28px;
+  width: 28px;
+  z-index: 31;
+}
+
+.react-resizable-handle-ne,
+.react-resizable-handle-nw {
+  top: -10px;
+}
+
+.react-resizable-handle-se,
+.react-resizable-handle-sw {
+  bottom: -10px;
+}
+
+.react-resizable-handle-ne,
+.react-resizable-handle-se {
+  right: -10px;
+}
+
+.react-resizable-handle-nw,
+.react-resizable-handle-sw {
+  left: -10px;
+}
+
+.react-resizable-handle-ne,
+.react-resizable-handle-sw {
+  cursor: nesw-resize;
+}
+
+.react-resizable-handle-nw,
+.react-resizable-handle-se {
+  cursor: nwse-resize;
 }
 
 .markdown-preview h1,
@@ -122,4 +210,16 @@ textarea {
 
 .markdown-preview .katex-display {
   margin: 0.55rem 0;
+}
+
+.math-align-left .katex-display {
+  text-align: left;
+}
+
+.math-align-center .katex-display {
+  text-align: center;
+}
+
+.math-align-right .katex-display {
+  text-align: right;
 }

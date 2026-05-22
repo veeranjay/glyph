@@ -7,6 +7,7 @@ import { renderFallbackGraphSvg, renderGraphErrorSvg } from "@/lib/rendering/fal
 type GraphBlockProps = {
   expression: string;
   caption: string;
+  radius: number;
 };
 
 type GraphResponse = {
@@ -14,7 +15,7 @@ type GraphResponse = {
   svg: string;
 };
 
-export function GraphBlock({ expression, caption }: GraphBlockProps) {
+export function GraphBlock({ expression, caption, radius }: GraphBlockProps) {
   const deferredExpression = useDeferredValue(expression);
   const localRender = useMemo(() => {
     try {
@@ -102,7 +103,10 @@ export function GraphBlock({ expression, caption }: GraphBlockProps) {
         {displayError ? <span>Local render</span> : null}
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-[18px] border border-[#2231271c] bg-[#fffdfa]">
+      <div
+        className="relative min-h-0 flex-1 overflow-hidden border border-[#2231271c] bg-[#fffdfa]"
+        style={{ borderRadius: Math.max(8, radius - 4) }}
+      >
         {displaySvg ? (
           <div
             className="h-full w-full"
@@ -115,7 +119,7 @@ export function GraphBlock({ expression, caption }: GraphBlockProps) {
         )}
       </div>
 
-      <p className="text-[12px] leading-5 text-[#405047]">{caption}</p>
+      <p className="leading-[inherit] text-[#405047]">{caption}</p>
     </div>
   );
 }

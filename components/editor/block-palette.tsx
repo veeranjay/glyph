@@ -4,6 +4,7 @@ import {
   ChartSpline,
   DraftingCompass,
   FunctionSquare,
+  Layers3,
   Lightbulb,
   NotebookPen,
 } from "lucide-react";
@@ -17,6 +18,7 @@ const icons = {
   graph: ChartSpline,
   callout: Lightbulb,
   diagram: DraftingCompass,
+  group: Layers3,
 };
 
 export function BlockPalette() {

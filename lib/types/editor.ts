@@ -3,9 +3,10 @@ export const PAGE_ROWS = 39;
 export const A4_WIDTH = 794;
 export const A4_HEIGHT = 1123;
 
-export type BlockType = "text" | "formula" | "graph" | "callout" | "diagram";
+export type BlockType = "text" | "formula" | "graph" | "callout" | "diagram" | "group";
 export type TextAlign = "left" | "center" | "right";
 export type DiagramTemplate = "coordinate-plane" | "free-body" | "ray-optics";
+export type GroupItemType = "text" | "formula" | "callout";
 
 export type BlockLayout = {
   i: string;
@@ -23,6 +24,7 @@ export type BlockStyle = {
   fontSize: number;
   lineHeight: number;
   padding: number;
+  radius: number;
   align: TextAlign;
 };
 
@@ -31,6 +33,7 @@ type BaseBlock<TType extends BlockType, TContent> = {
   type: TType;
   title: string;
   subtitle: string;
+  showHeader: boolean;
   layout: BlockLayout;
   style: BlockStyle;
   content: TContent;
@@ -75,12 +78,29 @@ export type DiagramBlock = BaseBlock<
   }
 >;
 
+export type GroupItem = {
+  id: string;
+  type: GroupItemType;
+  title: string;
+  body: string;
+  layout: BlockLayout;
+};
+
+export type GroupBlock = BaseBlock<
+  "group",
+  {
+    columns: number;
+    items: GroupItem[];
+  }
+>;
+
 export type EditorBlock =
   | TextBlock
   | FormulaBlock
   | GraphBlock
   | CalloutBlock
-  | DiagramBlock;
+  | DiagramBlock
+  | GroupBlock;
 
 export type BlockBlueprint = {
   type: BlockType;
@@ -113,5 +133,10 @@ export const BLOCK_BLUEPRINTS: BlockBlueprint[] = [
     type: "diagram",
     label: "Diagram",
     description: "Template-based visual blocks for mechanics, optics, and planes.",
+  },
+  {
+    type: "group",
+    label: "Group",
+    description: "A nested mini page for clustering notes, formulas, and callouts.",
   },
 ];

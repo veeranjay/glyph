@@ -1,9 +1,11 @@
 "use client";
 
 import { useTransition } from "react";
+import { AlignCenter, AlignLeft, AlignRight, Eye, EyeOff, Plus } from "lucide-react";
 
 import { useEditorStore } from "@/lib/store/editor-store";
-import type { EditorBlock, TextAlign } from "@/lib/types/editor";
+import type { EditorBlock, GroupItemType, TextAlign } from "@/lib/types/editor";
+import { cn } from "@/lib/utils";
 
 const accentSwatches = ["#d95f33", "#31543e", "#335c81", "#946846", "#7f4c85"];
 
@@ -23,6 +25,7 @@ function FieldLabel({ label, hint }: FieldLabelProps) {
 
 function MetaFields({ block }: { block: EditorBlock }) {
   const updateMeta = useEditorStore((state) => state.updateMeta);
+  const updateHeaderVisibility = useEditorStore((state) => state.updateHeaderVisibility);
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -49,6 +52,15 @@ function MetaFields({ block }: { block: EditorBlock }) {
         />
       </label>
 
+      <button
+        type="button"
+        className="flex items-center justify-between rounded-2xl border border-[#22312718] bg-white px-3 py-2 text-sm font-semibold text-[#223127] transition hover:border-[#d95f3360]"
+        onClick={() => updateHeaderVisibility(block.id, !block.showHeader)}
+      >
+        <span>{block.showHeader ? "Hide header" : "Show header"}</span>
+        {block.showHeader ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
+
       <div className="text-xs text-[#5d6c62]">
         {isPending ? "Updating block..." : "Metadata stays lightweight for dense editing."}
       </div>
@@ -58,6 +70,14 @@ function MetaFields({ block }: { block: EditorBlock }) {
 
 function StyleFields({ block }: { block: EditorBlock }) {
   const updateStyle = useEditorStore((state) => state.updateStyle);
+  const updateNumericStyle = (
+    patch: Partial<Pick<EditorBlock["style"], "fontSize" | "lineHeight" | "padding" | "radius">>,
+  ) => updateStyle(block.id, patch);
+  const alignments: Array<{ icon: typeof AlignLeft; label: string; value: TextAlign }> = [
+    { icon: AlignLeft, label: "Left", value: "left" },
+    { icon: AlignCenter, label: "Center", value: "center" },
+    { icon: AlignRight, label: "Right", value: "right" },
+  ];
 
   return (
     <div className="grid gap-4">
@@ -80,21 +100,30 @@ function StyleFields({ block }: { block: EditorBlock }) {
       </div>
 
       <label>
-        <FieldLabel label="Font Size" />
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <FieldLabel label="Font Size" />
+          <span className="text-xs font-semibold text-[#5d6c62]">{block.style.fontSize}px</span>
+        </div>
         <input
           type="range"
           min="11"
           max="22"
           value={block.style.fontSize}
           className="w-full accent-[#d95f33]"
+          onInput={(event) =>
+            updateNumericStyle({ fontSize: Number(event.currentTarget.value) })
+          }
           onChange={(event) =>
-            updateStyle(block.id, { fontSize: Number(event.target.value) })
+            updateNumericStyle({ fontSize: Number(event.currentTarget.value) })
           }
         />
       </label>
 
       <label>
-        <FieldLabel label="Line Height" />
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <FieldLabel label="Line Height" />
+          <span className="text-xs font-semibold text-[#5d6c62]">{block.style.lineHeight.toFixed(2)}</span>
+        </div>
         <input
           type="range"
           min="1"
@@ -102,51 +131,90 @@ function StyleFields({ block }: { block: EditorBlock }) {
           step="0.05"
           value={block.style.lineHeight}
           className="w-full accent-[#d95f33]"
+          onInput={(event) =>
+            updateNumericStyle({ lineHeight: Number(event.currentTarget.value) })
+          }
           onChange={(event) =>
-            updateStyle(block.id, { lineHeight: Number(event.target.value) })
+            updateNumericStyle({ lineHeight: Number(event.currentTarget.value) })
           }
         />
       </label>
 
       <label>
-        <FieldLabel label="Padding" />
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <FieldLabel label="Padding" />
+          <span className="text-xs font-semibold text-[#5d6c62]">{block.style.padding}px</span>
+        </div>
         <input
           type="range"
           min="10"
           max="24"
           value={block.style.padding}
           className="w-full accent-[#d95f33]"
+          onInput={(event) =>
+            updateNumericStyle({ padding: Number(event.currentTarget.value) })
+          }
           onChange={(event) =>
-            updateStyle(block.id, { padding: Number(event.target.value) })
+            updateNumericStyle({ padding: Number(event.currentTarget.value) })
           }
         />
       </label>
 
       <label>
-        <FieldLabel label="Alignment" />
-        <select
-          className="w-full rounded-2xl border border-[#22312718] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#d95f33]"
-          value={block.style.align}
-          onChange={(event) =>
-            updateStyle(block.id, { align: event.target.value as TextAlign })
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <FieldLabel label="Corner Radius" />
+          <span className="text-xs font-semibold text-[#5d6c62]">{block.style.radius}px</span>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="32"
+          value={block.style.radius}
+          className="w-full accent-[#d95f33]"
+          onInput={(event) =>
+            updateNumericStyle({ radius: Number(event.currentTarget.value) })
           }
-        >
-          <option value="left">Left</option>
-          <option value="center">Center</option>
-          <option value="right">Right</option>
-        </select>
+          onChange={(event) =>
+            updateNumericStyle({ radius: Number(event.currentTarget.value) })
+          }
+        />
       </label>
+
+      <div>
+        <FieldLabel label="Alignment" />
+        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-[#22312718] bg-white p-1">
+          {alignments.map(({ icon: Icon, label, value }) => (
+            <button
+              key={value}
+              type="button"
+              aria-label={label}
+              title={label}
+              className={cn(
+                "flex h-10 items-center justify-center rounded-xl text-[#5d6c62] transition",
+                block.style.align === value
+                  ? "bg-[#223127] text-white"
+                  : "hover:bg-[#edf0ea] hover:text-[#223127]",
+              )}
+              onClick={() => updateStyle(block.id, { align: value })}
+            >
+              <Icon className="h-4 w-4" />
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
 function ContentFields({ block }: { block: EditorBlock }) {
   const updateContent = useEditorStore((state) => state.updateContent);
+  const addGroupItem = useEditorStore((state) => state.addGroupItem);
+  const updateGroupItem = useEditorStore((state) => state.updateGroupItem);
 
   if (block.type === "text") {
     return (
       <label>
-        <FieldLabel label="Markdown" hint="Supports headings, lists, and inline LaTeX." />
+        <FieldLabel label="Markdown" hint="Use $...$ inline, $$...$$ for display math, or \\(...\\)." />
         <textarea
           className="h-44 w-full rounded-[22px] border border-[#22312718] bg-white px-3 py-3 text-sm outline-none transition focus:border-[#d95f33]"
           value={block.content.markdown}
@@ -221,6 +289,66 @@ function ContentFields({ block }: { block: EditorBlock }) {
             onChange={(event) => updateContent(block.id, { body: event.target.value })}
           />
         </label>
+      </div>
+    );
+  }
+
+  if (block.type === "group") {
+    const groupItemTypes: Array<{ label: string; type: GroupItemType }> = [
+      { label: "Text", type: "text" },
+      { label: "Formula", type: "formula" },
+      { label: "Callout", type: "callout" },
+    ];
+
+    return (
+      <div className="grid gap-4">
+        <div>
+          <FieldLabel label="Add Mini Block" />
+          <div className="grid grid-cols-3 gap-2">
+            {groupItemTypes.map((itemType) => (
+              <button
+                key={itemType.type}
+                type="button"
+                className="flex items-center justify-center gap-1 rounded-xl border border-[#22312718] bg-white px-2 py-2 text-xs font-semibold text-[#223127] transition hover:border-[#d95f3360]"
+                onClick={() => addGroupItem(block.id, itemType.type)}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                {itemType.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-3">
+          {block.content.items.map((item) => (
+            <section
+              key={item.id}
+              className="rounded-[18px] border border-[#22312712] bg-white/80 p-3"
+            >
+              <label>
+                <FieldLabel label={item.type === "formula" ? "Formula Title" : "Mini Title"} />
+                <input
+                  className="w-full rounded-2xl border border-[#22312718] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#d95f33]"
+                  value={item.title}
+                  onChange={(event) =>
+                    updateGroupItem(block.id, item.id, { title: event.target.value })
+                  }
+                />
+              </label>
+
+              <label className="mt-3 block">
+                <FieldLabel label={item.type === "formula" ? "LaTeX" : "Body"} />
+                <textarea
+                  className="h-20 w-full rounded-[18px] border border-[#22312718] bg-white px-3 py-3 text-sm outline-none transition focus:border-[#d95f33]"
+                  value={item.body}
+                  onChange={(event) =>
+                    updateGroupItem(block.id, item.id, { body: event.target.value })
+                  }
+                />
+              </label>
+            </section>
+          ))}
+        </div>
       </div>
     );
   }

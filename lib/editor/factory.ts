@@ -3,6 +3,8 @@ import {
   type BlockType,
   type DiagramBlock,
   type EditorBlock,
+  type GroupItem,
+  type GroupItemType,
 } from "@/lib/types/editor";
 
 const baseStyle = {
@@ -11,6 +13,7 @@ const baseStyle = {
   fontSize: 14,
   lineHeight: 1.35,
   padding: 14,
+  radius: 20,
   align: "left" as const,
 };
 
@@ -20,7 +23,40 @@ const starterLayouts: Record<BlockType, Omit<BlockLayout, "i" | "y">> = {
   graph: { x: 8, w: 4, h: 12, minW: 4, minH: 7 },
   callout: { x: 0, w: 4, h: 7, minW: 3, minH: 5 },
   diagram: { x: 4, w: 4, h: 10, minW: 4, minH: 7 },
+  group: { x: 0, w: 6, h: 14, minW: 4, minH: 8 },
 };
+
+export function createGroupItem(type: GroupItemType, index: number): GroupItem {
+  const id = `group-item-${index}`;
+
+  if (type === "formula") {
+    return {
+      id,
+      type,
+      title: "Formula",
+      body: "v^2 = u^2 + 2as",
+      layout: { i: id, x: 3, y: 0, w: 3, h: 4, minW: 2, minH: 3 },
+    };
+  }
+
+  if (type === "callout") {
+    return {
+      id,
+      type,
+      title: "Trap",
+      body: "Check sign convention before substituting values.",
+      layout: { i: id, x: 0, y: 5, w: 3, h: 4, minW: 2, minH: 3 },
+    };
+  }
+
+  return {
+    id,
+    type,
+    title: "Mini note",
+    body: "Group related facts into a local structure before compressing the page.",
+    layout: { i: id, x: 0, y: 0, w: 3, h: 5, minW: 2, minH: 3 },
+  };
+}
 
 export function createBlock(type: BlockType, index: number): EditorBlock {
   const id = `${type}-${index}`;
@@ -37,11 +73,12 @@ export function createBlock(type: BlockType, index: number): EditorBlock {
         type,
         title: "Structured Notes",
         subtitle: "Concept summary",
+        showHeader: true,
         layout,
         style: baseStyle,
         content: {
           markdown:
-            "## Conservation of Energy\n- Total mechanical energy stays constant when non-conservative work is zero.\n- Use `$K_i + U_i = K_f + U_f$` before expanding algebra.\n- Pair formulas with one sentence of intuition.",
+            "## Conservation of Energy\n- Total mechanical energy stays constant when non-conservative work is zero.\n- Use $K_i + U_i = K_f + U_f$ before expanding algebra.\n- Pair formulas with one sentence of intuition.",
         },
       };
     case "formula":
@@ -50,6 +87,7 @@ export function createBlock(type: BlockType, index: number): EditorBlock {
         type,
         title: "Core Formula",
         subtitle: "High-signal equation",
+        showHeader: true,
         layout,
         style: { ...baseStyle, align: "center", fontSize: 16 },
         content: {
@@ -63,6 +101,7 @@ export function createBlock(type: BlockType, index: number): EditorBlock {
         type,
         title: "Graph",
         subtitle: "Function preview",
+        showHeader: true,
         layout,
         style: baseStyle,
         content: {
@@ -76,6 +115,7 @@ export function createBlock(type: BlockType, index: number): EditorBlock {
         type,
         title: "Insight",
         subtitle: "Dense revision hint",
+        showHeader: true,
         layout,
         style: { ...baseStyle, background: "#fff4ea" },
         content: {
@@ -89,11 +129,30 @@ export function createBlock(type: BlockType, index: number): EditorBlock {
         type,
         title: "Diagram",
         subtitle: "Template visual",
+        showHeader: true,
         layout,
         style: baseStyle,
         content: {
           template: "free-body",
           note: "Start with force arrows before writing component equations.",
+        },
+      };
+    case "group":
+      return {
+        id,
+        type,
+        title: "Section Group",
+        subtitle: "Nested mini page",
+        showHeader: true,
+        layout,
+        style: { ...baseStyle, background: "#fbfcf7", padding: 12 },
+        content: {
+          columns: 6,
+          items: [
+            createGroupItem("text", 1),
+            createGroupItem("formula", 2),
+            createGroupItem("callout", 3),
+          ],
         },
       };
   }
